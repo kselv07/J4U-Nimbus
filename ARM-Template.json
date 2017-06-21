@@ -224,7 +224,7 @@
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"fileUris": [
-						"https://iaasv2tempstorewestus.blob.core.windows.net/vmextensionstemporary-10033fffa20ccd1a-20170620192326964/Execute.sh?sv=2015-04-05&sr=c&sig=jFNlJljickrmLLmcwpJew7xDaoGeu7zwTBVoiRq4WEE%3D&se=2017-06-21T19%3A23%3A27Z&sp=rw"
+						"https://isharesafeway.blob.core.windows.net/simple/Execute.sh"
 					],
 					"commandToExecute": "sudo apt-get update && sudo apt-get install maven -y && sudo sh Execute.sh"
 				}
