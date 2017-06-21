@@ -1,0 +1,235 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"virtualMachines_name": {
+			"defaultValue": "XMCHNE_NAME",
+			"type": "String"
+		},
+		"networkInterfaces_name": {
+			"defaultValue": "NIFACE_NAME",
+			"type": "String"
+		},
+		"networkSecurityGroups_nsg_name": {
+			"defaultValue": "PuppetAgent-nsg",
+			"type": "String"
+		},
+		"publicIPAddresses_ip_name": {
+			"defaultValue": "PUBIP_NAME",
+			"type": "String"
+		},
+		"virtualNetworks_vnet_name": {
+			"defaultValue": "Tools-CICD3-vneted",
+			"type": "String"
+		},
+		"storageAccounts_name": {
+			"defaultValue": "STRGEACC_NAME",
+			"type": "String"
+		},
+
+		"extensions_CustomScriptForLinux_name": {
+			"defaultValue": "CustomScriptForLinux",
+			"type": "String"
+		}
+	},
+	"variables": {},
+	"resources": [{
+			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Compute/virtualMachines/TemplateVM'.",
+			"type": "Microsoft.Compute/virtualMachines",
+			"name": "[parameters('virtualMachines_name')]",
+			"apiVersion": "2016-04-30-preview",
+			"location": "westus",
+			"scale": null,
+			"properties": {
+				"hardwareProfile": {
+					"vmSize": "Standard_DS1_v2"
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "Canonical",
+						"offer": "UbuntuServer",
+						"sku": "16.04-LTS",
+						"version": "latest"
+					},
+					"osDisk": {
+						"osType": "Linux",
+						"name": "[parameters('virtualMachines_name')]",
+						"createOption": "FromImage",
+						"vhd": {
+							"uri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.windows.net', concat('/vhds/', parameters('virtualMachines_name'),'20170620015533.vhd'))]"
+						},
+						"caching": "ReadWrite"
+					},
+					"dataDisks": []
+				},
+				"osProfile": {
+					"computerName": "[parameters('virtualMachines_name')]",
+					"adminUsername": "puppet",
+					"linuxConfiguration": {
+						"disablePasswordAuthentication": true,
+						"ssh": {
+							"publicKeys": [{
+								"path": "/home/puppet/.ssh/authorized_keys",
+								"keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgl7qqz5WNPwiCbZKbnFeoltNX/1TC6TkhjfPSkJGX7UJ8QsGzgtRpUu44Y3OPW0Tsd2RJXqEEeB0E0g0syngeGaVBlgzNX7pTr6bSnyxeNVxFY7oj0mpnf3GFJhOtujFA4LAyx0/y+xvEjy3HjxSitc6h65nD8wuIbqi8aP88E393Y00jfaI4bN6baTHKDR3oYRotsb+UHAyn38kOIg1QLiBkMzU2vAodGJ1LEi5AGf/J3/bK9GIBI8cUFYXbwQbwpfi5VvEbqBXFlSNc+e9mfcgm6jpL9f6Fe3kGfEoVyfW26cyzGx9z0DInDDgUpX2gR/Ke7hzzxCTLByUY3oJd"
+							}]
+						}
+					},
+					"secrets": []
+				},
+				"networkProfile": {
+					"networkInterfaces": [{
+						"id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_name'))]"
+					}]
+				},
+				"diagnosticsProfile": {
+					"bootDiagnostics": {
+						"enabled": true,
+						"storageUri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.windows.net', '/')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_name'))]",
+				"[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_name'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_name'))]"
+			]
+		},
+		{
+			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkInterfaces/templatevm376'.",
+			"type": "Microsoft.Network/networkInterfaces",
+			"name": "[parameters('networkInterfaces_name')]",
+			"apiVersion": "2017-03-01",
+			"location": "westus",
+			"scale": null,
+			"properties": {
+				"ipConfigurations": [{
+					"name": "ipconfig1",
+					"properties": {
+						"privateIPAddress": "10.0.0.4",
+						"privateIPAllocationMethod": "Dynamic",
+						"publicIPAddress": {
+							"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_ip_name'))]"
+						},
+						"subnet": {
+							"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name')), '/subnets/default')]"
+						}
+					}
+				}],
+				"dnsSettings": {
+					"dnsServers": []
+				},
+				"enableIPForwarding": false,
+				"networkSecurityGroup": {
+					"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_nsg_name'))]"
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_ip_name'))]",
+				"[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name'))]",
+				"[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_nsg_name'))]"
+			]
+		},
+		{
+			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkSecurityGroups/TemplateVM-nsg'.",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"name": "[parameters('networkSecurityGroups_nsg_name')]",
+			"apiVersion": "2017-03-01",
+			"location": "westus",
+			"scale": null,
+			"properties": {
+				"securityRules": [{
+					"name": "default-allow-ssh",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "22",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1000,
+						"direction": "Inbound"
+					}
+				}]
+			},
+			"dependsOn": []
+		},
+		{
+			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/publicIPAddresses/TemplateVM-ip'.",
+			"type": "Microsoft.Network/publicIPAddresses",
+			"name": "[parameters('publicIPAddresses_ip_name')]",
+			"apiVersion": "2017-03-01",
+			"location": "westus",
+			"scale": null,
+			"properties": {
+				"publicIPAllocationMethod": "Dynamic",
+				"idleTimeoutInMinutes": 4
+			},
+			"dependsOn": []
+		},
+		{
+			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/virtualNetworks/Tools-CICD-vnet'.",
+			"type": "Microsoft.Network/virtualNetworks",
+			"name": "[parameters('virtualNetworks_vnet_name')]",
+			"apiVersion": "2017-03-01",
+			"location": "westus",
+			"scale": null,
+			"properties": {
+				"addressSpace": {
+					"addressPrefixes": [
+						"10.0.0.0/24"
+					]
+				},
+				"subnets": [{
+					"name": "default",
+					"properties": {
+						"addressPrefix": "10.0.0.0/24"
+					}
+				}],
+				"virtualNetworkPeerings": []
+			},
+			"dependsOn": []
+		},
+		{
+			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/tools-cicd/providers/Microsoft.Storage/storageAccounts/toolscicddiag998'.",
+			"type": "Microsoft.Storage/storageAccounts",
+			"sku": {
+				"name": "Standard_LRS",
+				"tier": "Standard"
+			},
+			"kind": "Storage",
+			"name": "[parameters('storageAccounts_name')]",
+			"apiVersion": "2016-01-01",
+			"location": "westus",
+			"tags": {},
+			"scale": null,
+			"properties": {},
+			"dependsOn": []
+		},
+
+
+		{
+
+			"type": "Microsoft.Compute/virtualMachines/extensions",
+			"name": "[concat(parameters('virtualMachines_name'), '/',parameters('extensions_CustomScriptForLinux_name'))]",
+			"apiVersion": "2016-04-30-preview",
+			"location": "westus",
+			"dependsOn": [
+				"[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_name'))]"
+			],
+
+			"properties": {
+				"publisher": "Microsoft.Azure.Extensions",
+				"type": "CustomScript",
+				"typeHandlerVersion": "2.0",
+				"autoUpgradeMinorVersion": true,
+				"settings": {
+					"fileUris": [
+						"https://iaasv2tempstorewestus.blob.core.windows.net/vmextensionstemporary-10033fffa20ccd1a-20170620192326964/Execute.sh?sv=2015-04-05&sr=c&sig=jFNlJljickrmLLmcwpJew7xDaoGeu7zwTBVoiRq4WEE%3D&se=2017-06-21T19%3A23%3A27Z&sp=rw"
+					],
+					"commandToExecute": "sudo apt-get update && sudo apt-get install maven -y && sudo sh Execute.sh"
+				}
+			}
+
+		}
+	]
+}
