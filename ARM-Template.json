@@ -19,7 +19,7 @@
 			"type": "String"
 		},
 		"virtualNetworks_vnet_name": {
-			"defaultValue": "PuppetAgents_Vnet/default",
+			"defaultValue": "PuppetAgents_Vnet",
 			"type": "String"
 		},
 		"storageAccounts_name": {
