@@ -19,7 +19,7 @@
 			"type": "String"
 		},
 		"virtualNetworks_vnet_name": {
-			"defaultValue": "DevOps-CICD-AppGateway",
+			"defaultValue": "PuppetAgents_Vnet/default",
 			"type": "String"
 		},
 		"storageAccounts_name": {
