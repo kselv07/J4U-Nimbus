@@ -19,7 +19,7 @@
 			"type": "String"
 		},
 		"virtualNetworks_vnet_name": {
-			"defaultValue": "DevOps-CICD-AppGateway",
+			"defaultValue": "TestVnet",
 			"type": "String"
 		},
 		"storageAccounts_name": {
