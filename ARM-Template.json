@@ -19,7 +19,7 @@
 			"type": "String"
 		},
 		"virtualNetworks_vnet_name": {
-			"defaultValue": "TestVnet",
+			"defaultValue": "Tools-CICD3-vneted",
 			"type": "String"
 		},
 		"storageAccounts_name": {
