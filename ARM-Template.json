@@ -19,7 +19,7 @@
 			"type": "String"
 		},
 		"virtualNetworks_vnet_name": {
-			"defaultValue": "Tools-CICD3-vneted",
+			"defaultValue": "DevOps-CICD-AppGateway",
 			"type": "String"
 		},
 		"storageAccounts_name": {
@@ -28,7 +28,7 @@
 		},
 
 		"subnetName": {
-		 	"dafaultValue": "APISubnet",
+		 	"dafaultValue": "default",
             		"type": "string"
 	  },
 		"extensions_CustomScriptForLinux_name": {
