@@ -27,6 +27,10 @@
 			"type": "String"
 		},
 
+		"subnetName": {
+		 	"defaultValue": "default",
+            		"type": "string"
+	  },
 		"extensions_CustomScriptForLinux_name": {
 			"defaultValue": "CustomScriptForLinux",
 			"type": "String"
