@@ -27,10 +27,6 @@
 			"type": "String"
 		},
 
-	"subnetName": {
-		 	"dafaultValue": "APISubnet",
-            		"type": "string"
-	  },
 		"extensions_CustomScriptForLinux_name": {
 			"defaultValue": "CustomScriptForLinux",
 			"type": "String"
