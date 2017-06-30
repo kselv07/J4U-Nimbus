@@ -1,235 +1,245 @@
 {
-	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-	"contentVersion": "1.0.0.0",
-	"parameters": {
-		"virtualMachines_name": {
-			"defaultValue": "XMCHNE_NAME",
-			"type": "String"
-		},
-		"networkInterfaces_name": {
-			"defaultValue": "NIFACE_NAME",
-			"type": "String"
-		},
-		"networkSecurityGroups_nsg_name": {
-			"defaultValue": "PuppetAgent-nsg",
-			"type": "String"
-		},
-		"publicIPAddresses_ip_name": {
-			"defaultValue": "PUBIP_NAME",
-			"type": "String"
-		},
-		"virtualNetworks_vnet_name": {
-			"defaultValue": "DevOps-CICD-AppGateway",
-			"type": "String"
-		},
-		"storageAccounts_name": {
-			"defaultValue": "STRGEACC_NAME",
-			"type": "String"
-		},
-
-		"extensions_CustomScriptForLinux_name": {
-			"defaultValue": "CustomScriptForLinux",
-			"type": "String"
-		}
-	},
-	"variables": {},
-	"resources": [{
-			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Compute/virtualMachines/TemplateVM'.",
-			"type": "Microsoft.Compute/virtualMachines",
-			"name": "[parameters('virtualMachines_name')]",
-			"apiVersion": "2016-04-30-preview",
-			"location": "westus",
-			"scale": null,
-			"properties": {
-				"hardwareProfile": {
-					"vmSize": "Standard_DS1_v2"
-				},
-				"storageProfile": {
-					"imageReference": {
-						"publisher": "Canonical",
-						"offer": "UbuntuServer",
-						"sku": "16.04-LTS",
-						"version": "latest"
-					},
-					"osDisk": {
-						"osType": "Linux",
-						"name": "[parameters('virtualMachines_name')]",
-						"createOption": "FromImage",
-						"vhd": {
-							"uri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.windows.net', concat('/vhds/', parameters('virtualMachines_name'),'20170620015533.vhd'))]"
-						},
-						"caching": "ReadWrite"
-					},
-					"dataDisks": []
-				},
-				"osProfile": {
-					"computerName": "[parameters('virtualMachines_name')]",
-					"adminUsername": "puppet",
-					"linuxConfiguration": {
-						"disablePasswordAuthentication": true,
-						"ssh": {
-							"publicKeys": [{
-								"path": "/home/puppet/.ssh/authorized_keys",
-								"keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgl7qqz5WNPwiCbZKbnFeoltNX/1TC6TkhjfPSkJGX7UJ8QsGzgtRpUu44Y3OPW0Tsd2RJXqEEeB0E0g0syngeGaVBlgzNX7pTr6bSnyxeNVxFY7oj0mpnf3GFJhOtujFA4LAyx0/y+xvEjy3HjxSitc6h65nD8wuIbqi8aP88E393Y00jfaI4bN6baTHKDR3oYRotsb+UHAyn38kOIg1QLiBkMzU2vAodGJ1LEi5AGf/J3/bK9GIBI8cUFYXbwQbwpfi5VvEbqBXFlSNc+e9mfcgm6jpL9f6Fe3kGfEoVyfW26cyzGx9z0DInDDgUpX2gR/Ke7hzzxCTLByUY3oJd"
-							}]
-						}
-					},
-					"secrets": []
-				},
-				"networkProfile": {
-					"networkInterfaces": [{
-						"id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_name'))]"
-					}]
-				},
-				"diagnosticsProfile": {
-					"bootDiagnostics": {
-						"enabled": true,
-						"storageUri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.windows.net', '/')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_name'))]",
-				"[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_name'))]",
-				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_name'))]"
-			]
-		},
-		{
-			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkInterfaces/templatevm376'.",
-			"type": "Microsoft.Network/networkInterfaces",
-			"name": "[parameters('networkInterfaces_name')]",
-			"apiVersion": "2017-03-01",
-			"location": "westus",
-			"scale": null,
-			"properties": {
-				"ipConfigurations": [{
-					"name": "ipconfig1",
-					"properties": {
-						"privateIPAddress": "10.0.0.4",
-						"privateIPAllocationMethod": "Dynamic",
-						"publicIPAddress": {
-							"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_ip_name'))]"
-						},
-						"subnet": {
-							"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name')), '/subnets/default')]"
-						}
-					}
-				}],
-				"dnsSettings": {
-					"dnsServers": []
-				},
-				"enableIPForwarding": false,
-				"networkSecurityGroup": {
-					"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_nsg_name'))]"
-				}
-			},
-			"dependsOn": [
-				"[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_ip_name'))]",
-				"[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name'))]",
-				"[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_nsg_name'))]"
-			]
-		},
-		{
-			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkSecurityGroups/TemplateVM-nsg'.",
-			"type": "Microsoft.Network/networkSecurityGroups",
-			"name": "[parameters('networkSecurityGroups_nsg_name')]",
-			"apiVersion": "2017-03-01",
-			"location": "westus",
-			"scale": null,
-			"properties": {
-				"securityRules": [{
-					"name": "default-allow-ssh",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "22",
-						"sourceAddressPrefix": "*",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1000,
-						"direction": "Inbound"
-					}
-				}]
-			},
-			"dependsOn": []
-		},
-		{
-			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/publicIPAddresses/TemplateVM-ip'.",
-			"type": "Microsoft.Network/publicIPAddresses",
-			"name": "[parameters('publicIPAddresses_ip_name')]",
-			"apiVersion": "2017-03-01",
-			"location": "westus",
-			"scale": null,
-			"properties": {
-				"publicIPAllocationMethod": "Dynamic",
-				"idleTimeoutInMinutes": 4
-			},
-			"dependsOn": []
-		},
-		{
-			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/virtualNetworks/Tools-CICD-vnet'.",
-			"type": "Microsoft.Network/virtualNetworks",
-			"name": "[parameters('virtualNetworks_vnet_name')]",
-			"apiVersion": "2017-03-01",
-			"location": "westus",
-			"scale": null,
-			"properties": {
-				"addressSpace": {
-					"addressPrefixes": [
-						"10.0.0.0/24"
-					]
-				},
-				"subnets": [{
-					"name": "default",
-					"properties": {
-						"addressPrefix": "10.0.0.0/24"
-					}
-				}],
-				"virtualNetworkPeerings": []
-			},
-			"dependsOn": []
-		},
-		{
-			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/tools-cicd/providers/Microsoft.Storage/storageAccounts/toolscicddiag998'.",
-			"type": "Microsoft.Storage/storageAccounts",
-			"sku": {
-				"name": "Standard_LRS",
-				"tier": "Standard"
-			},
-			"kind": "Storage",
-			"name": "[parameters('storageAccounts_name')]",
-			"apiVersion": "2016-01-01",
-			"location": "westus",
-			"tags": {},
-			"scale": null,
-			"properties": {},
-			"dependsOn": []
-		},
-
-
-		{
-
-			"type": "Microsoft.Compute/virtualMachines/extensions",
-			"name": "[concat(parameters('virtualMachines_name'), '/',parameters('extensions_CustomScriptForLinux_name'))]",
-			"apiVersion": "2016-04-30-preview",
-			"location": "westus",
-			"dependsOn": [
-				"[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_name'))]"
-			],
-
-			"properties": {
-				"publisher": "Microsoft.Azure.Extensions",
-				"type": "CustomScript",
-				"typeHandlerVersion": "2.0",
-				"autoUpgradeMinorVersion": true,
-				"settings": {
-					"fileUris": [
-						"https://isharesafeway.blob.core.windows.net/simple/Execute.sh"
-					],
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "disks_PuppetAgent1_OsDisk_1_d3a31bd6d37b4f3a9bfcbc0befa501b9_name": {
+            "defaultValue": "STRGEACC_NAME",
+            "type": "String"
+        },
+        "virtualMachines_PuppetAgent1_name": {
+            "defaultValue": "XMCHNE_NAME",
+            "type": "String"
+        },
+        "networkInterfaces_puppetagent1507_name": {
+            "defaultValue": "NIFACE_NAME",
+            "type": "String"
+        },
+        "networkSecurityGroups_PuppetAgent1_nsg_name": {
+            "defaultValue": "PuppetAgent1-nsg",
+            "type": "String"
+        },
+        "publicIPAddresses_PuppetAgent1_ip_name": {
+            "defaultValue": "PUBIP_NAME",
+            "type": "String"
+        },
+        "virtualNetworks_Development_vnet_name": {
+            "defaultValue": "Development-vnet",
+            "type": "String"
+        },
+        "extensions_CustomScriptForLinux_name": {
+            "defaultValue": "PuppetAgent1/CustomScriptForLinux",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Compute/disks/PuppetAgent1_OsDisk_1_d3a31bd6d37b4f3a9bfcbc0befa501b9'.",
+            "type": "Microsoft.Compute/disks",
+            "name": "[parameters('disks_PuppetAgent1_OsDisk_1_d3a31bd6d37b4f3a9bfcbc0befa501b9_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "westus",
+            "scale": null,
+            "properties": {
+                "accountType": "Premium_LRS",
+                "osType": "Linux",
+                "creationData": {
+                    "createOption": "FromImage",
+                    "imageReference": {
+                        "id": "/Subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/Providers/Microsoft.Compute/Locations/westus/Publishers/Canonical/ArtifactTypes/VMImage/Offers/UbuntuServer/Skus/16.04-LTS/Versions/latest"
+                    }
+                },
+                "diskSizeGB": 30
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Compute/virtualMachines/PuppetAgent1'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_PuppetAgent1_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "westus",
+            "scale": null,
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "16.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_PuppetAgent1_name'),'_OsDisk_1_d3a31bd6d37b4f3a9bfcbc0befa501b9')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS",
+                            "id": "[resourceId('Microsoft.Compute/disks', parameters('disks_PuppetAgent1_OsDisk_1_d3a31bd6d37b4f3a9bfcbc0befa501b9_name'))]"
+                        },
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_PuppetAgent1_name')]",
+                    "adminUsername": "puppet",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/puppet/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgl7qqz5WNPwiCbZKbnFeoltNX/1TC6TkhjfPSkJGX7UJ8QsGzgtRpUu44Y3OPW0Tsd2RJXqEEeB0E0g0syngeGaVBlgzNX7pTr6bSnyxeNVxFY7oj0mpnf3GFJhOtujFA4LAyx0/y+xvEjy3HjxSitc6h65nD8wuIbqi8aP88E393Y00jfaI4bN6baTHKDR3oYRotsb+UHAyn38kOIg1QLiBkMzU2vAodGJ1LEi5AGf/J3/bK9GIBI8cUFYXbwQbwpfi5VvEbqBXFlSNc+e9mfcgm6jpL9f6Fe3kGfEoVyfW26cyzGx9z0DInDDgUpX2gR/Ke7hzzxCTLByUY3oJd"
+                                }
+                            ]
+                        }
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_puppetagent1507_name'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "https://deys2t2r2q7a6litediagst.blob.core.windows.net/"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/disks', parameters('disks_PuppetAgent1_OsDisk_1_d3a31bd6d37b4f3a9bfcbc0befa501b9_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_puppetagent1507_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Network/networkInterfaces/puppetagent1507'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_puppetagent1507_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "westus",
+            "scale": null,
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.3.0.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_PuppetAgent1_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Development_vnet_name')), '/subnets/VM_Subnet')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_PuppetAgent1_nsg_name'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_PuppetAgent1_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Development_vnet_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_PuppetAgent1_nsg_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Network/networkSecurityGroups/PuppetAgent1-nsg'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroups_PuppetAgent1_nsg_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "westus",
+            "scale": null,
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-ssh",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Network/publicIPAddresses/PuppetAgent1-ip'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddresses_PuppetAgent1_ip_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "westus",
+            "scale": null,
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Network/virtualNetworks/Development-vnet'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_Development_vnet_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "westus",
+            "scale": null,
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.3.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "VM_Subnet",
+                        "properties": {
+                            "addressPrefix": "10.3.0.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Compute/virtualMachines/PuppetAgent1/extensions/CustomScriptForLinux'.",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[parameters('extensions_CustomScriptForLinux_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "westus",
+            "scale": null,
+            "properties": {
+                "publisher": "Microsoft.OSTCExtensions",
+                "type": "CustomScriptForLinux",
+                "typeHandlerVersion": "1.4",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "https://isharesafeway.blob.core.windows.net/simple/Execute.sh"
+                    ],
 					"commandToExecute": "sudo apt-get update && sudo sh Execute.sh"
-				}
-			}
-
-		}
-	]
+                }
+            }
+            
+        }
+    ]
 }
