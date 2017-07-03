@@ -180,7 +180,8 @@
 				"addressSpace": {
 					"addressPrefixes": [
 						"10.0.0.0/24",
-						"10.1.0.0/24"
+						"10.1.0.0/24",
+						"10.2.0.0/24"
 					]
 				},
 				"subnets": [{
@@ -197,7 +198,14 @@
                                         "id": "[parameters('virtualNetworks_DevOps_CICD_AppGateway_id')]"
                                             }
                                         }
-                                }
+                                },
+					    {
+					    "name":"APIMSubnet",
+						    "type": "Microsoft.ApiManagement/service",
+						    "properties": {
+                                        "addressPrefix": "10.2.0.0/24"}
+					    
+					    }
 				],
 				"virtualNetworkPeerings": []
 			},
