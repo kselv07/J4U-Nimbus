@@ -201,9 +201,15 @@
                                 },
 					    {
 					    "name":"APIMSubnet",
-						    "type": "Microsoft.ApiManagement/service",
+						  
 						    "properties": {
-                                        "addressPrefix": "10.2.0.0/24"}
+                                        "addressPrefix": "10.2.0.0/24",
+						    
+						    
+						    "networkSecurityGroup": {
+                                        "id": "[parameters('virtualNetworks_DevOps_CICD_AppGateway_id')]"
+                                            }
+						    }
 					    
 					    }
 				],
