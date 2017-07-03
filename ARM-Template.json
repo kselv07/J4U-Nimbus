@@ -26,7 +26,10 @@
 			"defaultValue": "STRGEACC_NAME",
 			"type": "String"
 		},
-
+		 "virtualNetworks_DevOps_CICD_AppGateway_id": {
+            		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Network/networkSecurityGroups/PuppetAgent-nsg",
+            		"type": "String"
+        	},
 		"extensions_CustomScriptForLinux_name": {
 			"defaultValue": "CustomScriptForLinux",
 			"type": "String"
@@ -176,7 +179,8 @@
 			"properties": {
 				"addressSpace": {
 					"addressPrefixes": [
-						"10.0.0.0/24"
+						"10.0.0.0/24",
+						"10.1.0.0/24"
 					]
 				},
 				"subnets": [{
@@ -184,7 +188,17 @@
 					"properties": {
 						"addressPrefix": "10.0.0.0/24"
 					}
-				}],
+				},
+                                {
+                                        "name": "Gateway",
+                                        "properties": {
+                                        "addressPrefix": "10.1.0.0/24",
+                                        "networkSecurityGroup": {
+                                        "id": "[parameters('virtualNetworks_DevOps_CICD_AppGateway_id')]"
+                                            }
+                                        }
+                                }
+				],
 				"virtualNetworkPeerings": []
 			},
 			"dependsOn": []
