@@ -152,7 +152,26 @@
 						"priority": 1000,
 						"direction": "Inbound"
 					}
-				}]
+				},
+						 
+						  {
+						  "name": "tcprule",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "80-443",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1010,
+						"direction": "Inbound"
+					}
+						  
+						  
+						  }
+						 
+						 
+						 ]
 			},
 			"dependsOn": []
 		},
