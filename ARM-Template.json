@@ -160,7 +160,7 @@
 						"protocol": "TCP",
 						"sourcePortRange": "*",
 						"destinationPortRange": "80",
-						"sourceAddressPrefix": "*",
+						"sourceAddressPrefix": "Internet",
 						"destinationAddressPrefix": "*",
 						"access": "Allow",
 						"priority": 1010,
