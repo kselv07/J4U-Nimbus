@@ -158,7 +158,7 @@
 						  "name": "tcprule",
 					"properties": {
 						"protocol": "TCP",
-						"sourcePortRange": "Internet",
+						"sourcePortRange": "*",
 						"destinationPortRange": "80",
 						"sourceAddressPrefix": "*",
 						"destinationAddressPrefix": "*",
