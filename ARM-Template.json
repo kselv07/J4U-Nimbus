@@ -158,8 +158,8 @@
 						  "name": "tcprule",
 					"properties": {
 						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "80-443",
+						"sourcePortRange": "Internet",
+						"destinationPortRange": "80",
 						"sourceAddressPrefix": "*",
 						"destinationAddressPrefix": "*",
 						"access": "Allow",
@@ -168,7 +168,24 @@
 					}
 						  
 						  
+						  },
+						  
+						  {
+						  
+						  "name": "9000Inbound",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "9000",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1020,
+						"direction": "Inbound"
+					}
+						  
 						  }
+						  
 						 
 						 
 						 ]
