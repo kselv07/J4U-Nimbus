@@ -283,7 +283,7 @@
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"fileUris": [
-						"https://isharesafeway.blob.core.windows.net/simple/Execute.sh"
+						"https://isharesafeway.blob.core.windows.net/development/PuppetAgentConfiguration.sh"
 					],
 					"commandToExecute": "sudo apt-get update && sudo sh Execute.sh"
 				}
