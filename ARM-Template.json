@@ -249,7 +249,7 @@
 			"dependsOn": []
 		},
 		{
-			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/tools-cicd/providers/Microsoft.Storage/storageAccounts/toolscicddiag998'.",
+			"comments": "Generalized from resources: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/tools-cicd/providers/Microsoft.Storage/storageAccounts/toolscicddiag998'.",
 			"type": "Microsoft.Storage/storageAccounts",
 			"sku": {
 				"name": "Standard_LRS",
