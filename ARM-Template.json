@@ -11,7 +11,7 @@
 			"type": "String"
 		},
 		"networkSecurityGroups_nsg_name": {
-			"defaultValue": "PuppetAgent_REPLACENSG",
+			"defaultValue": "NETWORKSECGRP",
 			"type": "String"
 		},
 		"publicIPAddresses_ip_name": {
