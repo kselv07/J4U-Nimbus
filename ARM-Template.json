@@ -27,7 +27,7 @@
 			"type": "String"
 		},
 		 "virtualNetworks_DevOps_CICD_AppGateway_id": {
-            		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Network/networkSecurityGroups/PuppetAgent-nsg",
+            		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Network/networkSecurityGroups/PuppetAgent_REPLACENSG",
             		"type": "String"
         	},
 		"extensions_CustomScriptForLinux_name": {
