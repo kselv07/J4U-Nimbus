@@ -14,6 +14,18 @@
 			"defaultValue": "PuppetAgent_REPLACENSG",
 			"type": "String"
 		},
+		"APIM_NSG_name":
+		{
+		
+		"defaultValue": "APIM_REPLACENSG",
+			"type": "String"
+		
+		},
+		"AppGateway_NSG_name":
+		{
+		"defaultValue": "AppGateway_REPLACENSG",
+			"type": "String"
+		},
 		"publicIPAddresses_ip_name": {
 			"defaultValue": "PUBIP_NAME",
 			"type": "String"
@@ -27,16 +39,33 @@
 			"type": "String"
 		},
 		 "virtualNetworks_DevOps_CICD_AppGateway_id": {
-            		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/Development/providers/Microsoft.Network/networkSecurityGroups/PuppetAgent_REPLACENSG",
+            		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/PuppetAgent_REPLACENSG",
             		"type": "String"
         	},
+		"APIM_NSG":
+		{
+		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/APIM_REPLACENSG",
+			"type":"string"
+		
+		},
+		"AppGateway_NSG":
+		{
+		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/AppGateway_REPLACENSG",
+			"type":"string"
+		
+		
+		
+		},
 		"extensions_CustomScriptForLinux_name": {
 			"defaultValue": "CustomScriptForLinux",
 			"type": "String"
 		}
 	},
 	"variables": {},
-	"resources": [{
+	"resources": 
+	[
+	
+	   {
 			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Compute/virtualMachines/TemplateVM'.",
 			"type": "Microsoft.Compute/virtualMachines",
 			"name": "[parameters('virtualMachines_name')]",
@@ -192,6 +221,180 @@
 			},
 			"dependsOn": []
 		},
+		
+		{
+		
+		"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkSecurityGroups/TemplateVM-nsg'.",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"name": "[parameters('APIM_NSG_name')]",
+			"apiVersion": "2017-03-01",
+			"location": "westus",
+			"scale": null,
+			"properties": {
+				"securityRules": [{
+					"name": "httpin",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "80",
+						"sourceAddressPrefix": "Internet",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1000,
+						"direction": "Inbound"
+					}
+				},
+						 
+						  {
+						  "name": "httpsin",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "443",
+						"sourceAddressPrefix": "Internet",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1010,
+						"direction": "Inbound"
+					}
+						  
+						  
+						  },
+						  {
+						  
+						   "name": "httpout",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "80",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "Internet",
+						"access": "Allow",
+						"priority": 1040,
+						"direction": "Outbound"
+						  
+						  
+						  
+						  }
+						  },
+						  
+						  						  {
+						  
+						   "name": "httpsout",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "443",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "Internet",
+						"access": "Allow",
+						"priority": 100,
+						"direction": "Outbound"
+						  
+						  
+						  
+						  }
+						  }						  
+						 
+						  
+						 
+						 
+						 ]
+			},
+			"dependsOn": []
+		
+		
+		
+		
+		
+		},
+		
+		
+		
+		{
+		
+		"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkSecurityGroups/TemplateVM-nsg'.",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"name": "[parameters('AppGateway_NSG_name')]",
+			"apiVersion": "2017-03-01",
+			"location": "westus",
+			"scale": null,
+			"properties": {
+				"securityRules": [{
+					"name": "rule_ag_vm",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "*",
+						"sourceAddressPrefix": "Internet",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1000,
+						"direction": "Inbound"
+					}
+				},
+						 
+						  {
+						  "name": "rule_vnet_ag",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "*",
+						"sourceAddressPrefix": "VirtualNetwork",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1010,
+						"direction": "Inbound"
+					}
+						  
+						  
+						  },
+						  
+						  						  {
+						  "name": "rule_ag",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "*",
+						"sourceAddressPrefix": "Internet",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1020,
+						"direction": "Inbound"
+					}
+						  
+						  
+						  },
+						  {
+						  
+						   "name": "apimout",
+					"properties": {
+						"protocol": "TCP",
+						"sourcePortRange": "*",
+						"destinationPortRange": "80",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 1010,
+						"direction": "Outbound"
+						  
+						  
+						  
+						  }
+						  }
+						  
+						 
+						 
+						 ]
+			},
+			"dependsOn": []
+		
+		
+		
+		
+		
+		}
+		,
 		{
 			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/publicIPAddresses/TemplateVM-ip'.",
 			"type": "Microsoft.Network/publicIPAddresses",
@@ -215,23 +418,26 @@
 			"properties": {
 				"addressSpace": {
 					"addressPrefixes": [
-						"10.0.0.0/24",
-						"10.1.0.0/24",
-						"10.2.0.0/24"
+						"SUBNET_0/24",
+						"SUBNET_1/24",
+						"SUBNET_2/24"
 					]
 				},
 				"subnets": [{
 					"name": "default",
 					"properties": {
-						"addressPrefix": "10.0.0.0/24"
+						"addressPrefix": "SUBNET_0/24",
+						"networkSecurityGroup": {
+                                        "id": "[parameters('virtualNetworks_DevOps_CICD_AppGateway_id')]"
+                                            }
 					}
 				},
                                 {
                                         "name": "Gateway",
                                         "properties": {
-                                        "addressPrefix": "10.1.0.0/24",
+                                        "addressPrefix": "SUBNET_1/24",
                                         "networkSecurityGroup": {
-                                        "id": "[parameters('virtualNetworks_DevOps_CICD_AppGateway_id')]"
+                                        "id": "[parameters('AppGateway_NSG')]"
                                             }
                                         }
                                 },
@@ -239,7 +445,10 @@
 					    "name":"APIMSubnet",
 						  
 						    "properties": {
-                                        "addressPrefix": "10.2.0.0/24"
+                                        "addressPrefix": "SUBNET_2/24",
+										"networkSecurityGroup": {
+                                        "id": "[parameters('APIM_NSG')]"
+                                            }
 						    }
 					    
 					    }
