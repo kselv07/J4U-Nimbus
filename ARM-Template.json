@@ -6,6 +6,13 @@
 			"defaultValue": "XMCHNE_NAME",
 			"type": "String"
 		},
+		"APIMSubnet_replaceNSG":
+		{
+		"defaultValue": "APIMSubnet_REPLACENSG",
+			"type": "String"
+		
+		}
+		,
 		"networkInterfaces_name": {
 			"defaultValue": "NIFACE_NAME",
 			"type": "String"
@@ -442,7 +449,7 @@
                                         }
                                 },
 					    {
-					    "name":"APIMSubnet_REPLACENSG",
+					    "name":"[parameters('APIMSubnet_replaceNSG')]",
 						  
 						    "properties": {
                                         "addressPrefix": "SUBNET_2/24",
