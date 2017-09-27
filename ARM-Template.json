@@ -2,34 +2,34 @@
 	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",
 	"parameters": {
-	"safewayEnvironment": {
-      "type": "string",
-      "metadata": {
-        "description": "The Safeway Azure Subscription Name"
-      },
-      "allowedValues": [
-        "DevOps",
-        "EMJU",
-        "EMJU-pf",
-        "EMJU-qa",
-        "EMJU-qa2"
-      ]
-    },
-	 "subnetName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the subnet VM will be joined to"
-      },
-	  
-	  "allowedValues": [
-       "SUBNET_0",
-	   "SUBNET_1",
-	   "SUBNET_2
-      ]
-	  
-    },
-	
-	
+		"safewayEnvironment": {
+			"type": "string",
+			"metadata": {
+				"description": "The Safeway Azure Subscription Name"
+			},
+			"allowedValues": [
+				"DevOps",
+				"EMJU",
+				"EMJU-pf",
+				"EMJU-qa",
+				"EMJU-qa2"
+			]
+		},
+		"subnetName": {
+			"type": "string",
+			"metadata": {
+				"description": "Name of the subnet VM will be joined to"
+			},
+
+			"allowedValues": [
+				"SUBNET_0",
+				"SUBNET_1",
+				"SUBNET_2"
+			]
+
+		},
+
+
 		"virtualMachines_name": {
 			"defaultValue": "XMCHNE_NAME",
 			"type": "string"
@@ -42,16 +42,14 @@
 			"defaultValue": "PuppetAgent_REPLACENSG",
 			"type": "string"
 		},
-		"APIM_NSG_name":
-		{
-		
-		"defaultValue": "APIM_REPLACENSG",
+		"APIM_NSG_name": {
+
+			"defaultValue": "APIM_REPLACENSG",
 			"type": "string"
-		
+
 		},
-		"AppGateway_NSG_name":
-		{
-		"defaultValue": "AppGateway_REPLACENSG",
+		"AppGateway_NSG_name": {
+			"defaultValue": "AppGateway_REPLACENSG",
 			"type": "string"
 		},
 		"publicIPAddresses_ip_name": {
@@ -62,24 +60,22 @@
 			"defaultValue": "DevOps-CICD-AppGateway",
 			"type": "string"
 		},
-		
-		 "virtualNetworks_DevOps_CICD_AppGateway_id": {
-            		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/PuppetAgent_REPLACENSG",
-            		"type": "string"
-        	},
-		"APIM_NSG":
-		{
-		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/APIM_REPLACENSG",
-			"type":"string"
-		
+
+		"virtualNetworks_DevOps_CICD_AppGateway_id": {
+			"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/PuppetAgent_REPLACENSG",
+			"type": "string"
 		},
-		"AppGateway_NSG":
-		{
-		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/AppGateway_REPLACENSG",
-			"type":"string"
-		
-		
-		
+		"APIM_NSG": {
+			"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/APIM_REPLACENSG",
+			"type": "string"
+
+		},
+		"AppGateway_NSG": {
+			"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/AppGateway_REPLACENSG",
+			"type": "string"
+
+
+
 		},
 		"extensions_CustomScriptForLinux_name": {
 			"defaultValue": "CustomScriptForLinux",
@@ -87,36 +83,34 @@
 		}
 	},
 	"variables": {
-	
-	
-	 "imagePublisher": "Canonical",
-    "imageOffer": "UbuntuServer",
-    "ubuntuOSVersion": "16.04-LTS",
-    "vnetID": "[resourceId(variables('safewayEnvironment').virtualNetworkResourceGroup,'Microsoft.Network/virtualNetworks',variables('safewayEnvironment').virtualNetworkName)]",
-    "serviceSubnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
-    "newStorageAccountRandomName": "[substring(toLower(concat(concat(uniqueString(resourceGroup().id)),parameters('subnetName'),'diagstorageaccount')),0,23)]",
-    "availabilitySetName": "[concat(parameters('vmNamePrefix'),'-AVS')]",
-    "nicNamePrefix": "[concat(parameters('vmNamePrefix'),'-NIC')]",
-    "storageAccountType": "Standard_LRS",
-    "adminUsername": "puppet"
-	
+
+
+		"imagePublisher": "Canonical",
+		"imageOffer": "UbuntuServer",
+		"ubuntuOSVersion": "16.04-LTS",
+		"vnetID": "[resourceId(variables('safewayEnvironment').virtualNetworkResourceGroup,'Microsoft.Network/virtualNetworks',variables('safewayEnvironment').virtualNetworkName)]",
+		"serviceSubnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
+		"newStorageAccountRandomName": "[substring(toLower(concat(concat(uniqueString(resourceGroup().id)),parameters('subnetName'),'diagstorageaccount')),0,23)]",
+		"availabilitySetName": "[concat(parameters('vmNamePrefix'),'-AVS')]",
+		"nicNamePrefix": "[concat(parameters('vmNamePrefix'),'-NIC')]",
+		"storageAccountType": "Standard_LRS",
+		"adminUsername": "puppet"
+
 	},
-	"resources": 
-	[
-	 {
-      "type": "Microsoft.Compute/availabilitySets",
-      "name": "[variables('availabilitySetName')]",
-      "apiVersion": "2017-03-30",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "platformUpdateDomainCount": 5,
-        "platformFaultDomainCount": 3
-      },
-      "sku": {
-        "name": "Aligned"
-      }
-    },
-	   {
+	"resources": [{
+			"type": "Microsoft.Compute/availabilitySets",
+			"name": "[variables('availabilitySetName')]",
+			"apiVersion": "2017-03-30",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"platformUpdateDomainCount": 5,
+				"platformFaultDomainCount": 3
+			},
+			"sku": {
+				"name": "Aligned"
+			}
+		},
+		{
 			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Compute/virtualMachines/TemplateVM'.",
 			"type": "Microsoft.Compute/virtualMachines",
 			"name": "[parameters('virtualMachines_name')]",
@@ -136,13 +130,13 @@
 					},
 					"osDisk": {
 						"createOption": "FromImage",
-            "diskSizeGB": 128
+						"diskSizeGB": 128
 					},
 					"dataDisks": []
 				},
 				"osProfile": {
 					"computerName": "[parameters('virtualMachines_name')]",
-					"adminUsername": [variables('adminUsername')],
+					"adminUsername": "[variables('adminUsername')]",
 					"linuxConfiguration": {
 						"disablePasswordAuthentication": true,
 						"ssh": {
@@ -162,7 +156,7 @@
 				"diagnosticsProfile": {
 					"bootDiagnostics": {
 						"enabled": "true",
-            "storageUri": "[concat('http://',variables('newStorageAccountRandomName'),'.blob.core.windows.net')]"
+						"storageUri": "[concat('http://',variables('newStorageAccountRandomName'),'.blob.core.windows.net')]"
 					}
 				}
 			},
@@ -176,7 +170,7 @@
 			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkInterfaces/templatevm376'.",
 			"type": "Microsoft.Network/networkInterfaces",
 			"name": "[parameters('networkInterfaces_name')]",
-			#new apiVersion
+
 			"apiVersion": "2017-09-01",
 			"location": "westus",
 			"scale": null,
@@ -186,9 +180,7 @@
 					"properties": {
 						"privateIPAddress": "10.0.0.4",
 						"privateIPAllocationMethod": "Dynamic",
-						#"publicIPAddress": {
-							#"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_ip_name'))]"
-						#},
+
 						"subnet": {
 							"id": "[variables('serviceSubnetRef')]"
 						}
@@ -197,10 +189,8 @@
 				"dnsSettings": {
 					"dnsServers": []
 				},
-				"enableIPForwarding": false,
-				#"networkSecurityGroup": {
-					#"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_nsg_name'))]"
-				#}
+				"enableIPForwarding": false
+
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_ip_name'))]",
@@ -217,61 +207,61 @@
 			"scale": null,
 			"properties": {
 				"securityRules": [{
-					"name": "default-allow-ssh",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "22",
-						"sourceAddressPrefix": "*",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1000,
-						"direction": "Inbound"
+						"name": "default-allow-ssh",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "22",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1000,
+							"direction": "Inbound"
+						}
+					},
+
+					{
+						"name": "tcprule",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "80",
+							"sourceAddressPrefix": "Internet",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1010,
+							"direction": "Inbound"
+						}
+
+
+					},
+
+					{
+
+						"name": "9000Inbound",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "9000",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1020,
+							"direction": "Inbound"
+						}
+
 					}
-				},
-						 
-						  {
-						  "name": "tcprule",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "80",
-						"sourceAddressPrefix": "Internet",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1010,
-						"direction": "Inbound"
-					}
-						  
-						  
-						  },
-						  
-						  {
-						  
-						  "name": "9000Inbound",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "9000",
-						"sourceAddressPrefix": "*",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1020,
-						"direction": "Inbound"
-					}
-						  
-						  }
-						  
-						 
-						 
-						 ]
+
+
+
+				]
 			},
 			"dependsOn": []
 		},
-		
+
 		{
-		
-		"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkSecurityGroups/TemplateVM-nsg'.",
+
+			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkSecurityGroups/TemplateVM-nsg'.",
 			"type": "Microsoft.Network/networkSecurityGroups",
 			"name": "[parameters('APIM_NSG_name')]",
 			"apiVersion": "2017-03-01",
@@ -279,88 +269,88 @@
 			"scale": null,
 			"properties": {
 				"securityRules": [{
-					"name": "httpin",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "80",
-						"sourceAddressPrefix": "Internet",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1000,
-						"direction": "Inbound"
+						"name": "httpin",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "80",
+							"sourceAddressPrefix": "Internet",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1000,
+							"direction": "Inbound"
+						}
+					},
+
+					{
+						"name": "httpsin",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "443",
+							"sourceAddressPrefix": "Internet",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1010,
+							"direction": "Inbound"
+						}
+
+
+					},
+					{
+
+						"name": "httpout",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "80",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "Internet",
+							"access": "Allow",
+							"priority": 1040,
+							"direction": "Outbound"
+
+
+
+						}
+					},
+
+					{
+
+						"name": "httpsout",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "443",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "Internet",
+							"access": "Allow",
+							"priority": 100,
+							"direction": "Outbound"
+
+
+
+						}
 					}
-				},
-						 
-						  {
-						  "name": "httpsin",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "443",
-						"sourceAddressPrefix": "Internet",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1010,
-						"direction": "Inbound"
-					}
-						  
-						  
-						  },
-						  {
-						  
-						   "name": "httpout",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "80",
-						"sourceAddressPrefix": "*",
-						"destinationAddressPrefix": "Internet",
-						"access": "Allow",
-						"priority": 1040,
-						"direction": "Outbound"
-						  
-						  
-						  
-						  }
-						  },
-						  
-						  						  {
-						  
-						   "name": "httpsout",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "443",
-						"sourceAddressPrefix": "*",
-						"destinationAddressPrefix": "Internet",
-						"access": "Allow",
-						"priority": 100,
-						"direction": "Outbound"
-						  
-						  
-						  
-						  }
-						  }						  
-						 
-						  
-						 
-						 
-						 ]
+
+
+
+
+				]
 			},
 			"dependsOn": []
-		
-		
-		
-		
-		
+
+
+
+
+
 		},
-		
-		
-		
+
+
+
 		{
-		
-		"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkSecurityGroups/TemplateVM-nsg'.",
+
+			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkSecurityGroups/TemplateVM-nsg'.",
 			"type": "Microsoft.Network/networkSecurityGroups",
 			"name": "[parameters('AppGateway_NSG_name')]",
 			"apiVersion": "2017-03-01",
@@ -368,80 +358,79 @@
 			"scale": null,
 			"properties": {
 				"securityRules": [{
-					"name": "rule_ag_vm",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "*",
-						"sourceAddressPrefix": "Internet",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1000,
-						"direction": "Inbound"
+						"name": "rule_ag_vm",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "Internet",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1000,
+							"direction": "Inbound"
+						}
+					},
+
+					{
+						"name": "rule_vnet_ag",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "VirtualNetwork",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1010,
+							"direction": "Inbound"
+						}
+
+
+					},
+
+					{
+						"name": "rule_ag",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "*",
+							"sourceAddressPrefix": "Internet",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1020,
+							"direction": "Inbound"
+						}
+
+
+					},
+					{
+
+						"name": "apimout",
+						"properties": {
+							"protocol": "TCP",
+							"sourcePortRange": "*",
+							"destinationPortRange": "80",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1010,
+							"direction": "Outbound"
+
+
+
+						}
 					}
-				},
-						 
-						  {
-						  "name": "rule_vnet_ag",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "*",
-						"sourceAddressPrefix": "VirtualNetwork",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1010,
-						"direction": "Inbound"
-					}
-						  
-						  
-						  },
-						  
-						  						  {
-						  "name": "rule_ag",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "*",
-						"sourceAddressPrefix": "Internet",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1020,
-						"direction": "Inbound"
-					}
-						  
-						  
-						  },
-						  {
-						  
-						   "name": "apimout",
-					"properties": {
-						"protocol": "TCP",
-						"sourcePortRange": "*",
-						"destinationPortRange": "80",
-						"sourceAddressPrefix": "*",
-						"destinationAddressPrefix": "*",
-						"access": "Allow",
-						"priority": 1010,
-						"direction": "Outbound"
-						  
-						  
-						  
-						  }
-						  }
-						  
-						 
-						 
-						 ]
+
+
+
+				]
 			},
 			"dependsOn": []
-		
-		
-		
-		
-		
-		}
-		,
+
+
+
+
+
+		},
 		{
 			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/virtualNetworks/Tools-CICD-vnet'.",
 			"type": "Microsoft.Network/virtualNetworks",
@@ -458,34 +447,34 @@
 					]
 				},
 				"subnets": [{
-					"name": "default",
-					"properties": {
-						"addressPrefix": "SUBNET_0/24",
-						"networkSecurityGroup": {
-                                        "id": "[parameters('virtualNetworks_DevOps_CICD_AppGateway_id')]"
-                                            }
+						"name": "default",
+						"properties": {
+							"addressPrefix": "SUBNET_0/24",
+							"networkSecurityGroup": {
+								"id": "[parameters('virtualNetworks_DevOps_CICD_AppGateway_id')]"
+							}
+						}
+					},
+					{
+						"name": "Gateway",
+						"properties": {
+							"addressPrefix": "SUBNET_1/24",
+							"networkSecurityGroup": {
+								"id": "[parameters('AppGateway_NSG')]"
+							}
+						}
+					},
+					{
+						"name": "APIMSubnet_ENV",
+
+						"properties": {
+							"addressPrefix": "SUBNET_2/24",
+							"networkSecurityGroup": {
+								"id": "[parameters('APIM_NSG')]"
+							}
+						}
+
 					}
-				},
-                                {
-                                        "name": "Gateway",
-                                        "properties": {
-                                        "addressPrefix": "SUBNET_1/24",
-                                        "networkSecurityGroup": {
-                                        "id": "[parameters('AppGateway_NSG')]"
-                                            }
-                                        }
-                                },
-					    {
-					    "name":"APIMSubnet_ENV",
-						  
-						    "properties": {
-                                        "addressPrefix": "SUBNET_2/24",
-										"networkSecurityGroup": {
-                                        "id": "[parameters('APIM_NSG')]"
-                                            }
-						    }
-					    
-					    }
 				],
 				"virtualNetworkPeerings": []
 			},
@@ -495,41 +484,40 @@
 			"comments": "Generalized from resources: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/tools-cicd/providers/Microsoft.Storage/storageAccounts/toolscicddiag998'.",
 			"type": "Microsoft.Storage/storageAccounts",
 			"name": "[variables('newStorageAccountRandomName')]",
-      "apiVersion": "2016-01-01",
-      "location": "[resourceGroup().location]",
-      "kind": "Storage",
-      "sku": {
-        "name": "[variables('storageAccountType')]"
-      },
-      "properties": {}
+			"apiVersion": "2016-01-01",
+			"location": "[resourceGroup().location]",
+			"kind": "Storage",
+			"sku": {
+				"name": "[variables('storageAccountType')]"
+			},
+			"properties": {}
+
 		},
 
 
-		"resources": [
-        {
-          "name": "/deployScript",
-          "type": "extensions",
-          "location": "[resourceGroup().location]",
-          "apiVersion": "2017-03-30",
-          "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('vmNamePrefix'),'-', copyindex()))]"
-          ],
-          "tags": {
-            "displayName": "deployScript"
-          },
-          "properties": {
-            "publisher": "Microsoft.Azure.Extensions",
-            "type": "CustomScript",
-            "typeHandlerVersion": "2.0",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "fileUris": [
-                "https://isharesafeway.blob.core.windows.net/AGENT_ENV_ID/PuppetAgentConfiguration.sh"
-              ],
-              "commandToExecute": "sudo apt-get update && sudo sh PuppetAgentConfiguration.sh"
-            }
-          }
-        }
-      ]
+		{
+			"name": "/deployScript",
+			"type": "extensions",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2017-03-30",
+			"dependsOn": [
+				"[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('vmNamePrefix'),'-', copyindex()))]"
+			],
+			"tags": {
+				"displayName": "deployScript"
+			},
+			"properties": {
+				"publisher": "Microsoft.Azure.Extensions",
+				"type": "CustomScript",
+				"typeHandlerVersion": "2.0",
+				"autoUpgradeMinorVersion": true,
+				"settings": {
+					"fileUris": [
+						"https://isharesafeway.blob.core.windows.net/AGENT_ENV_ID/PuppetAgentConfiguration.sh"
+					],
+					"commandToExecute": "sudo apt-get update && sudo sh PuppetAgentConfiguration.sh"
+				}
+			}
+		}
 	]
 }
