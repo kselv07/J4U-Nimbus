@@ -2,45 +2,70 @@
 	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",
 	"parameters": {
+	"safewayEnvironment": {
+      "type": "string",
+      "metadata": {
+        "description": "The Safeway Azure Subscription Name"
+      },
+      "allowedValues": [
+        "DevOps",
+        "EMJU",
+        "EMJU-pf",
+        "EMJU-qa",
+        "EMJU-qa2"
+      ]
+    },
+	 "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet VM will be joined to"
+      },
+	  
+	  "allowedValues": [
+       "SUBNET_0",
+	   "SUBNET_1",
+	   "SUBNET_2
+      ]
+	  
+    },
+	
+	
 		"virtualMachines_name": {
 			"defaultValue": "XMCHNE_NAME",
-			"type": "String"
+			"type": "string"
 		},
 		"networkInterfaces_name": {
 			"defaultValue": "NIFACE_NAME",
-			"type": "String"
+			"type": "string"
 		},
 		"networkSecurityGroups_nsg_name": {
 			"defaultValue": "PuppetAgent_REPLACENSG",
-			"type": "String"
+			"type": "string"
 		},
 		"APIM_NSG_name":
 		{
 		
 		"defaultValue": "APIM_REPLACENSG",
-			"type": "String"
+			"type": "string"
 		
 		},
 		"AppGateway_NSG_name":
 		{
 		"defaultValue": "AppGateway_REPLACENSG",
-			"type": "String"
+			"type": "string"
 		},
 		"publicIPAddresses_ip_name": {
 			"defaultValue": "PUBIP_NAME",
-			"type": "String"
+			"type": "string"
 		},
 		"virtualNetworks_vnet_name": {
 			"defaultValue": "DevOps-CICD-AppGateway",
-			"type": "String"
+			"type": "string"
 		},
-		"storageAccounts_name": {
-			"defaultValue": "STRGEACC_NAME",
-			"type": "String"
-		},
+		
 		 "virtualNetworks_DevOps_CICD_AppGateway_id": {
             		"defaultValue": "/subscriptions/c84a0bf7-34ac-405f-9de6-e2555f138e82/resourceGroups/ENV_CNG/providers/Microsoft.Network/networkSecurityGroups/PuppetAgent_REPLACENSG",
-            		"type": "String"
+            		"type": "string"
         	},
 		"APIM_NSG":
 		{
@@ -58,18 +83,44 @@
 		},
 		"extensions_CustomScriptForLinux_name": {
 			"defaultValue": "CustomScriptForLinux",
-			"type": "String"
+			"type": "string"
 		}
 	},
-	"variables": {},
+	"variables": {
+	
+	
+	 "imagePublisher": "Canonical",
+    "imageOffer": "UbuntuServer",
+    "ubuntuOSVersion": "16.04-LTS",
+    "vnetID": "[resourceId(variables('safewayEnvironment').virtualNetworkResourceGroup,'Microsoft.Network/virtualNetworks',variables('safewayEnvironment').virtualNetworkName)]",
+    "serviceSubnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
+    "newStorageAccountRandomName": "[substring(toLower(concat(concat(uniqueString(resourceGroup().id)),parameters('subnetName'),'diagstorageaccount')),0,23)]",
+    "availabilitySetName": "[concat(parameters('vmNamePrefix'),'-AVS')]",
+    "nicNamePrefix": "[concat(parameters('vmNamePrefix'),'-NIC')]",
+    "storageAccountType": "Standard_LRS",
+    "adminUsername": "puppet"
+	
+	},
 	"resources": 
 	[
-	
+	 {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetName')]",
+      "apiVersion": "2017-03-30",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "platformUpdateDomainCount": 5,
+        "platformFaultDomainCount": 3
+      },
+      "sku": {
+        "name": "Aligned"
+      }
+    },
 	   {
 			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Compute/virtualMachines/TemplateVM'.",
 			"type": "Microsoft.Compute/virtualMachines",
 			"name": "[parameters('virtualMachines_name')]",
-			"apiVersion": "2016-04-30-preview",
+			"apiVersion": "2017-03-30",
 			"location": "westus",
 			"scale": null,
 			"properties": {
@@ -84,19 +135,14 @@
 						"version": "latest"
 					},
 					"osDisk": {
-						"osType": "Linux",
-						"name": "[parameters('virtualMachines_name')]",
 						"createOption": "FromImage",
-						"vhd": {
-							"uri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.windows.net', concat('/vhds/', parameters('virtualMachines_name'),'20170620015533.vhd'))]"
-						},
-						"caching": "ReadWrite"
+            "diskSizeGB": 128
 					},
 					"dataDisks": []
 				},
 				"osProfile": {
 					"computerName": "[parameters('virtualMachines_name')]",
-					"adminUsername": "puppet",
+					"adminUsername": [variables('adminUsername')],
 					"linuxConfiguration": {
 						"disablePasswordAuthentication": true,
 						"ssh": {
@@ -115,22 +161,23 @@
 				},
 				"diagnosticsProfile": {
 					"bootDiagnostics": {
-						"enabled": true,
-						"storageUri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.windows.net', '/')]"
+						"enabled": "true",
+            "storageUri": "[concat('http://',variables('newStorageAccountRandomName'),'.blob.core.windows.net')]"
 					}
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_name'))]",
+				"[variables('newStorageAccountRandomName')]",
 				"[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_name'))]",
-				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_name'))]"
+				"[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
 			]
 		},
 		{
 			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/networkInterfaces/templatevm376'.",
 			"type": "Microsoft.Network/networkInterfaces",
 			"name": "[parameters('networkInterfaces_name')]",
-			"apiVersion": "2017-03-01",
+			#new apiVersion
+			"apiVersion": "2017-09-01",
 			"location": "westus",
 			"scale": null,
 			"properties": {
@@ -139,11 +186,11 @@
 					"properties": {
 						"privateIPAddress": "10.0.0.4",
 						"privateIPAllocationMethod": "Dynamic",
-						"publicIPAddress": {
-							"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_ip_name'))]"
-						},
+						#"publicIPAddress": {
+							#"id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_ip_name'))]"
+						#},
 						"subnet": {
-							"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name')), '/subnets/default')]"
+							"id": "[variables('serviceSubnetRef')]"
 						}
 					}
 				}],
@@ -151,9 +198,9 @@
 					"dnsServers": []
 				},
 				"enableIPForwarding": false,
-				"networkSecurityGroup": {
-					"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_nsg_name'))]"
-				}
+				#"networkSecurityGroup": {
+					#"id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_nsg_name'))]"
+				#}
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_ip_name'))]",
@@ -396,19 +443,6 @@
 		}
 		,
 		{
-			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/publicIPAddresses/TemplateVM-ip'.",
-			"type": "Microsoft.Network/publicIPAddresses",
-			"name": "[parameters('publicIPAddresses_ip_name')]",
-			"apiVersion": "2017-03-01",
-			"location": "westus",
-			"scale": null,
-			"properties": {
-				"publicIPAllocationMethod": "Dynamic",
-				"idleTimeoutInMinutes": 4
-			},
-			"dependsOn": []
-		},
-		{
 			"comments": "Generalized from resource: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/Tools-CICD/providers/Microsoft.Network/virtualNetworks/Tools-CICD-vnet'.",
 			"type": "Microsoft.Network/virtualNetworks",
 			"name": "[parameters('virtualNetworks_vnet_name')]",
@@ -460,44 +494,42 @@
 		{
 			"comments": "Generalized from resources: '/subscriptions/82efaddc-6a0b-45eb-a41f-6e2317b2bbd3/resourceGroups/tools-cicd/providers/Microsoft.Storage/storageAccounts/toolscicddiag998'.",
 			"type": "Microsoft.Storage/storageAccounts",
-			"sku": {
-				"name": "Standard_LRS",
-				"tier": "Standard"
-			},
-			"kind": "Storage",
-			"name": "[parameters('storageAccounts_name')]",
-			"apiVersion": "2016-01-01",
-			"location": "westus",
-			"tags": {},
-			"scale": null,
-			"properties": {},
-			"dependsOn": []
+			"name": "[variables('newStorageAccountRandomName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[resourceGroup().location]",
+      "kind": "Storage",
+      "sku": {
+        "name": "[variables('storageAccountType')]"
+      },
+      "properties": {}
 		},
 
 
-		{
-
-			"type": "Microsoft.Compute/virtualMachines/extensions",
-			"name": "[concat(parameters('virtualMachines_name'), '/',parameters('extensions_CustomScriptForLinux_name'))]",
-			"apiVersion": "2016-04-30-preview",
-			"location": "westus",
-			"dependsOn": [
-				"[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_name'))]"
-			],
-
-			"properties": {
-				"publisher": "Microsoft.Azure.Extensions",
-				"type": "CustomScript",
-				"typeHandlerVersion": "2.0",
-				"autoUpgradeMinorVersion": true,
-				"settings": {
-					"fileUris": [
-						"https://isharesafeway.blob.core.windows.net/AGENT_ENV_ID/PuppetAgentConfiguration.sh"
-					],
-					"commandToExecute": "sudo apt-get update && sudo sh PuppetAgentConfiguration.sh"
-				}
-			}
-
-		}
+		"resources": [
+        {
+          "name": "/deployScript",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2017-03-30",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('vmNamePrefix'),'-', copyindex()))]"
+          ],
+          "tags": {
+            "displayName": "deployScript"
+          },
+          "properties": {
+            "publisher": "Microsoft.Azure.Extensions",
+            "type": "CustomScript",
+            "typeHandlerVersion": "2.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "https://isharesafeway.blob.core.windows.net/AGENT_ENV_ID/PuppetAgentConfiguration.sh"
+              ],
+              "commandToExecute": "sudo apt-get update && sudo sh PuppetAgentConfiguration.sh"
+            }
+          }
+        }
+      ]
 	]
 }
